@@ -10,6 +10,20 @@ const loading = ref(false)
 const error = ref(null)
 const showResult = ref(false)
 const showKeyboard = ref(false)
+const showHelp = ref(false)
+
+const message = `🇰🇷 Why Knowing Hanja Is Important for Learning Korean <br>
+Learning Hanja (Chinese characters used in Korean) is not mandatory today, but it offers major advantages for anyone who wants to understand Korean deeply.<br>
+1. Better Vocabulary Understanding Over 60% of Korean words come from Hanja.Knowing the characters helps you understand the root meaning of many words, even if you’ve never seen them before.For example:<br>
+* 학 (學) = study → 학교 (school), 학생 (student), 학습 (learning)<br>
+2. Clearer Distinction Between Similar Words Many Korean words sound identical but have different meanings.Hanja helps you distinguish homonyms instantly.Example:<br>
+* 사과 (apple) = 沙果<br>
+* 사과 (apology) = 謝過<br>
+3. Faster Vocabulary Acquisition Once you know a few common Hanja, you can guess the meanings of new words simply by recognizing the components.This makes learning more logical and less about memorization.<br>
+4. Improved Reading Comprehension In newspapers, academic texts, and legal documents, many terms are based on Hanja.Knowing them helps you understand formal and technical vocabulary more easily.<br>
+5. Cultural and Historical Insight Hanja connects Korean to its historical roots and traditional literature.Understanding it gives you deeper insight into Korean culture, names, idioms, and expressions.<br>`
+
+const messageWithBreaks = message
 
 let keyboard = null
 
@@ -24,7 +38,7 @@ async function initKeyboard() {
     layout: {
       default: [
         "ㅂ ㅃ ㅈ ㅉ ㄷ ㄸ ㄱ ㄲ ㅅ ㅆ ㅛ ㅕ ㅑ ㅒ ㅖ",
-        "ㅁ ㄴ ㅇ ㄹ ㅎ ㅗ ㅓ ㅏ ㅣ",
+        "ㅁ ㄴ ㅇ ㄹ ㅎ ㅗ ㅓ ㅏ ㅣ ㅐ ㅔ",
         "ㅋ ㅌ ㅊ ㅍ ㅠ ㅜ ㅡ",
         "{space} {bksp}"
       ]
@@ -41,7 +55,7 @@ function handleKey(button) {
   if (button === "{space}") {
     commitBuffer()
     committed += ' '
-    updateText() // show committed + space
+    updateText()
     return
   }
 
@@ -82,18 +96,9 @@ function commitBuffer() {
 }
 
 
-// helper pour supprimer le dernier grapheme (caractère coréen complet) de committed
 function removeLastGrapheme(s) {
-  // approche simple : on utilise Hangul.disassemble pour retirer le dernier syllabe proprement
   if (!s) return ''
-  // si le dernier index est un espace, juste pop
   if (s.slice(-1) === ' ') return s.slice(0, -1)
-
-  // on essaye d'identifier la dernière syllabe
-  // découper en tableau de syllabes (approximation via split(""))
-  // plus robuste : utiliser Hangul.disassemble/assemble
-  // méthode : retirer le dernier codepoint (Unicode) — suffit généralement pour la plupart des usages
-  // On utilise une solution simple et sûre :
   return s.slice(0, -1)
 }
 
@@ -114,7 +119,6 @@ async function analyse(query = null) {
   // Si on reçoit un Event (KeyboardEvent / MouseEvent), on l'ignore
   if (query instanceof Event) query = null
 
-  // Si on reçoit autre chose que string (ex. undefined), on prend text.value
   const mot = (typeof query === 'string' ? query : String(text.value || '')).trim()
   if (!mot) return
 
@@ -132,34 +136,46 @@ async function analyse(query = null) {
     const res = await fetch(`http://127.0.0.1:8000/analyse?text=${encodeURIComponent(mot)}`)
     if (!res.ok) throw new Error(`Erreur ${res.status}`)
     const data = await res.json()
-    console.log('✅ Données reçues:', data)
     result.value = data.result
     setTimeout(() => { showResult.value = true }, 200)
   } catch (err) {
-    console.error('❌ Erreur de fetch:', err)
     error.value = 'Une erreur est survenue.'
   } finally {
     loading.value = false
   }
 }
 
-// 🔤 Nettoyage et découpage des exemples
 function parseExemple(exemple) {
   const clean = exemple.replace(/\s+/g, ' ').trim()
   const parts = clean.split(' ')
   return { hanja: parts[0], korean: parts[1], meaning: parts.slice(2).join(' ') }
 }
 
-// 🚀 Relance l’analyse quand on clique sur un mot coréen
 function rechercherMot(koreanWord) {
   text.value = koreanWord
   analyse(koreanWord)
 }
+
 </script>
 
 <template>
-  <div style="max-width:700px;margin:2rem auto;font-family:sans-serif;">
-    <h1>🌊 Get the hanja</h1>
+
+<div class="help-container">
+  <div 
+    class="help-icon"
+    @click="showHelp = !showHelp"
+  >
+    ?
+  </div>
+
+  <!-- Transition pour l'animation -->
+  <transition name="tooltip-fade">
+    <div v-if="showHelp" class="tooltip" v-html="messageWithBreaks"></div>
+  </transition>
+</div>
+
+  <div style="width:85vw;margin:0;padding:2rem;font-family:sans-serif;box-sizing:border-box;position:relative;left:0%;right:0%">
+              <h1>🇰🇷 Get the hanja</h1>
 
     <input
       v-model="text"
@@ -191,13 +207,16 @@ function rechercherMot(koreanWord) {
       <div class="spinner"></div>
       <p>Loading ...</p>
     </div>
+  
 
     <!-- Résultat -->
     <transition name="fade" mode="out-in">
       <div v-if="showResult && result" key="result" style="margin-top:2rem;">
-        <h2>Résultat pour : <span style="color:#0077cc;">{{ result.mot }}</span></h2>
+        <h2>Résultat pour : <span style="color:#0077cc;">{{ result.mot }}</span>  (<span style="color: #0077cc;">{{ result.translation }}</span>)</h2>
         <p><strong>Hanja :</strong> {{ result.hanja }}</p>
 
+
+        <div class="cards-container">
         <div v-for="detail in result.details" :key="detail.caractere" class="card">
           <h3>{{ detail.caractere }}</h3>
           <p><em>{{ detail.definition }}</em></p>
@@ -221,11 +240,86 @@ function rechercherMot(koreanWord) {
           </ul>
         </div>
       </div>
+
+
+      </div>
     </transition>
-  </div>
+</div>
 </template>
 
 <style>
+.help-container {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+}
+
+.help-icon {
+  background: gray;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.tooltip {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  background: black;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 9999;
+  white-space: normal;
+  max-width: 1200px;
+  width: auto;
+  word-wrap: break-word;
+}
+
+/* Animation fade + slide */
+.tooltip-fade-enter-active,
+.tooltip-fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tooltip-fade-enter-from,
+.tooltip-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.tooltip-fade-enter-to,
+.tooltip-fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* Conteneur des cards */
+.cards-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Sur écran large → 2 colonnes */
+@media (min-width: 900px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+  }
+}
+
 .card {
   background: #000000;
   margin: 10px 0;
@@ -285,4 +379,10 @@ button:disabled {
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
+
+#app {
+  width: 100%;
+  min-width: 0;
+}
+
 </style>
