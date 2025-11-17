@@ -1,6 +1,21 @@
 {
-  "dependencies": {
-    "hangul-js": "^0.2.6",
-    "simple-keyboard": "^3.8.88"
+  {
+    "name": "mon-projet-vue",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "preview": "vite preview",
+      "start": "vite preview"
+    },
+    "dependencies": {
+      "vue": "^3.3.4",
+      "hangul-js": "^0.2.6",
+      "simple-keyboard": "^3.8.88"
+    },
+    "devDependencies": {
+      "vite": "^4.4.9"
+    }
   }
 }
