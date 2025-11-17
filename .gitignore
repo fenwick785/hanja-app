@@ -1,5 +1,4 @@
 backend/__pycache__/bot_logic.cpython-311.pyc
 .DS_Store
 node_modules
-dist
 .env
