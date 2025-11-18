@@ -3,7 +3,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from backend.bot_logic import hanja_def  # tes fonctions d'analyse
+#from backend.bot_logic import hanja_def  # a utiliser en local
+from bot_logic import hanja_def
 
 app = FastAPI(title="Hanja App")
 
