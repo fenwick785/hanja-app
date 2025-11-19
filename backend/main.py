@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 # 🔹 Chemin absolu vers le dossier dist
-frontend_path = os.path.join(os.path.dirname(__file__), "../frontend/dist")
+frontend_path = os.path.join(os.path.dirname(__file__), "frontend/dist")
 
 # 🔹 Monte le build complet (JS, CSS, index.html, etc.)
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
