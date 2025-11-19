@@ -20,8 +20,8 @@ app.add_middleware(
 # 🔹 Chemin absolu vers le dossier dist
 frontend_path = os.path.join(os.path.dirname(__file__), "../frontend/dist")
 
-# 🔹 Monte les assets statiques du front (JS, CSS, etc.)
-app.mount("/assets", StaticFiles(directory=os.path.join(frontend_path, "assets")), name="assets")
+# 🔹 Monte le build complet (JS, CSS, index.html, etc.)
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
 
 # 🔹 Route API pour l'analyse
 @app.get("/analyse")
