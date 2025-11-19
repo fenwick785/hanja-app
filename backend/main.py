@@ -30,15 +30,5 @@ async def analyse(text: str):
     return {"input": text, "result": result}
 
 
-# 🔹 Sert index.html pour toutes les autres routes (SPA)
-@app.get("/{full_path:path}")
-async def serve_frontend(full_path: str):
-    return FileResponse(os.path.join(frontend_path, "index.html"))
-
-
-# 🔹 Route racine
-@app.get("/")
-async def root():
-    return FileResponse(os.path.join(frontend_path, "index.html"))
 
 # Pour exécuter avec: uvicorn backend.main:app --reload
