@@ -1,22 +1,34 @@
-FROM node:20-alpine
-
-WORKDIR /app
+# ========================
+# Stage 1 : Build FRONTEND
+# ========================
+FROM node:20-alpine AS frontend
+WORKDIR /frontend
 
 # Copier uniquement package.json et package-lock.json pour profiter du cache
-COPY package.json package-lock.json ./
-
-# Installer les dépendances
+COPY frontend/package*.json ./
 RUN npm install
 
-# Copier le reste des fichiers
-COPY . .
+# Copier le reste du frontend
+COPY frontend/ .
+RUN npm run build   # génère /frontend/dist
 
-# Build Vite app
-RUN npm run build
+# ========================
+# Stage 2 : Backend Python
+# ========================
+FROM python:3.11-slim
+WORKDIR /app
 
-# Installer un serveur léger
-RUN npm install -g serve
+# Copier backend
+COPY backend/ /app/
 
-EXPOSE 5173
+# Copier le build frontend depuis le stage 1
+COPY --from=frontend /frontend/dist /app/frontend/dist
 
-CMD ["serve", "-s", "dist", "-l", "5173"]
+# Installer dépendances Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exposer le port de FastAPI
+EXPOSE 8000
+
+# Lancer FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
