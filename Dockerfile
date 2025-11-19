@@ -4,7 +4,7 @@
 FROM node:20-alpine AS frontend
 WORKDIR /frontend
 
-# Copier uniquement package.json et package-lock.json pour profiter du cache
+# Copier package.json pour profiter du cache
 COPY frontend/package*.json ./
 RUN npm install
 
