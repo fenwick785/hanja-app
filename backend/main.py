@@ -23,8 +23,8 @@ print(">>> FRONTEND PATH =", frontend_path)
 print(">>> exists:", os.path.isdir(frontend_path))
 print(">>> content:", os.listdir(os.path.dirname(frontend_path)) if os.path.isdir(os.path.dirname(frontend_path)) else "no parent dir")
 
-# 🚀 Sert TOUT le front (index.html + assets)
-app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+# Serve frontend
+app.mount("/", StaticFiles(directory="../frontend/dist", html=True), name="frontend")
 
 # API
 @app.get("/analyse")
