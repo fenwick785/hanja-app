@@ -23,6 +23,7 @@ app.add_middleware(
 print(">>> exists:", os.path.isdir(frontend_path))
 print(">>> content:", os.listdir(os.path.dirname(frontend_path)) if os.path.isdir(os.path.dirname(frontend_path)) else "no parent dir")
 
+
 #Test
 @app.get("/")
 def home():
