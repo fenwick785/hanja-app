@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from bot_logic import hanja_def
+from backend.bot_logic import hanja_def
 
 app = FastAPI(title="Hanja App")
 
@@ -20,8 +20,8 @@ app.add_middleware(
 
 # 🔍 TEST : afficher le chemin dans les logs Railway
 #print(">>> FRONTEND PATH =", frontend_path)
-print(">>> exists:", os.path.isdir(frontend_path))
-print(">>> content:", os.listdir(os.path.dirname(frontend_path)) if os.path.isdir(os.path.dirname(frontend_path)) else "no parent dir")
+#print(">>> exists:", os.path.isdir(frontend_path))
+#print(">>> content:", os.listdir(os.path.dirname(frontend_path)) if os.path.isdir(os.path.dirname(frontend_path)) else "no parent dir")
 
 
 #Test

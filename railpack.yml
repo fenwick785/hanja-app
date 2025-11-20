@@ -1,8 +1,6 @@
-services:
-  web:
-    root_dir: backend
-    start_command: uvicorn main:app --host 0.0.0.0 --port 8000
-    port: 8000
+build:
+  commands:
+    - pip install -r backend/requirements.txt
 
-spa:
-  output_dir: frontend/dist
+start:
+  command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
