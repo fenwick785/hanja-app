@@ -1,5 +1,15 @@
 services:
   web:
     root_dir: .
-    build_command: cd frontend && npm install && npm run build
-    start_command: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    build_command: |
+      echo "📦 Installing frontend dependencies..."
+      cd frontend && npm install
+      echo "🏗️ Building frontend..."
+      npm run build
+      echo "📂 Listing frontend/dist contents:"
+      ls -la dist/
+      cd ..
+      echo "📂 Listing root contents:"
+      ls -la
+      echo "✅ Build complete"
+    start_command: python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT
