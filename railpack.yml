@@ -1,13 +1,9 @@
 services:
-  web:
-    root_dir: .
-    build_command: |
-      cd frontend
-      npm install
-      npm run build
-      echo "📂 Checking build output:"
-      ls -la dist/
-      cd ..
-      echo "📂 Root structure:"
-      ls -la
-    start_command: cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+  backend:
+    root_dir: backend
+    start_command: uvicorn main:app --host 0.0.0.0 --port $PORT
+
+spa:
+  root_dir: frontend
+  output_dir: dist
+  build_command: npm install && npm run build

@@ -12,6 +12,29 @@ const showResult = ref(false)
 const showKeyboard = ref(false)
 const showHelp = ref(false)
 
+// 🔧 Configuration de l'API
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+try {
+    const response = await fetch(`${API_URL}/api/analyse?text=${encodeURIComponent(text.value)}`)
+    
+    if (!response.ok) {
+      throw new Error(`Erreur API: ${response.status}`)
+    }
+    
+    const data = await response.json()
+    result.value = data.result
+    showResult.value = true
+    console.log('Résultat:', data)
+    
+  } catch (err) {
+    console.error('Erreur lors de l\'appel API:', err)
+    error.value = 'Impossible de contacter le serveur. Vérifiez votre connexion.'
+  } finally {
+    loading.value = false
+  }
+
+
 const message = `🇰🇷 Why Knowing Hanja Is Important for Learning Korean <br>
 Learning Hanja (Chinese characters used in Korean) is not mandatory today, but it offers major advantages for anyone who wants to understand Korean deeply.<br>
 1. Better Vocabulary Understanding Over 60% of Korean words come from Hanja.Knowing the characters helps you understand the root meaning of many words, even if you’ve never seen them before.For example:<br>

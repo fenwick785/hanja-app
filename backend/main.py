@@ -15,18 +15,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 📌 Chemin correct vers le build du front
-frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
-app.mount("/", StaticFiles(directory=frontend_path, html=True), name="static")
-
-# 🔍 TEST : afficher le chemin dans les logs Railway
-print(">>> FRONTEND PATH =", frontend_path)
-print(">>> exists:", os.path.isdir(frontend_path))
-print(">>> content:", os.listdir(os.path.dirname(frontend_path)) if os.path.isdir(os.path.dirname(frontend_path)) else "no parent dir")
-
-
-# API
-@app.get("/analyse")
+# API Routes
+@app.get("/api/analyse")
 async def analyse(text: str):
     result = await hanja_def(text)
     return {"input": text, "result": result}
+
+@app.get("/api/health")
+async def health():
+    return {"status": "ok"}
+
+@app.get("/")
+async def root():
+    return {"message": "Hanja API is running", "status": "ok"}
