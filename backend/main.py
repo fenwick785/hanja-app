@@ -16,7 +16,8 @@ app.add_middleware(
 )
 
 # 📌 Chemin correct vers le build du front
-frontend_path = os.path.join(os.path.dirname(__file__), "frontend/dist")
+frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="static")
 
 # 🔍 TEST : afficher le chemin dans les logs Railway
 print(">>> FRONTEND PATH =", frontend_path)

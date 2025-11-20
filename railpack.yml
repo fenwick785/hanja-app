@@ -1,8 +1,5 @@
 services:
   web:
-    root_dir: backend
-    start_command: uvicorn main:app --host 0.0.0.0 --port 8000
-    port: 8000
-
-spa:
-  output_dir: frontend/dist
+    root_dir: .
+    build_command: cd frontend && npm install && npm run build
+    start_command: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
