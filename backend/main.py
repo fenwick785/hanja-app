@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from .bot_logic import hanja_def
+from bot_logic import hanja_def
 
 app = FastAPI(title="Hanja App")
 
